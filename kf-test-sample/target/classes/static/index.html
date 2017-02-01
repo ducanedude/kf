@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head> 
+    <title>Search Blog</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
+    <script>
+    $(document).ready(function() {
+    	$("#results").hide();
+    	$("#noResults").hide();
+    	
+	    $("#dataSearch").click(function() {
+	    	
+	        $.ajax({
+	            type: 'POST',
+	            url: 'search',
+	            data: $('#criteria').serialize(),
+	            dataType:"json", //to parse string into JSON object,
+	            success: function(data){
+	                if(data){
+	                    var txt = "<table><tr><th>Title</th><th>Body</th></tr>";
+	                    if(data.length > 0){
+	                        for(var i=0;i<data.length;i++){
+	                            if(data[i].title && data[i].body){
+	                                txt += "<tr><td>"+data[i].title+"</td><td>"+data[i].body+"</td></tr>";
+	                            }
+	                        }
+	                        
+	                        txt += "</table>";
+	                        
+	                        $("#results").html(txt);
+	                        
+	                        $("#results").show();
+                        	$("#noResults").hide();
+                        	
+	                    } else {
+	                    	$("#results").hide();
+                        	$("#noResults").show();
+	                    }
+	                } else {
+	                	$("#results").hide();
+                    	$("#noResults").show();
+	                }
+	            },
+	            error: function(jqXHR, textStatus, errorThrown){
+	                alert('error: ' + textStatus + ': ' + errorThrown);
+	            }
+	        });
+	        
+	        //return false;//suppress natural form submission
+	    });
+    });
+    </script>
+</head>
+<body>
+    <input type="text" id="criteria" name="criteria"/>
+    <input type="button" id="dataSearch" value="Search"/>
+    
+    <div id="results">
+	</div>
+	
+	<div id="noResults">
+		No results found
+	</div>
+</body>
+</html>
